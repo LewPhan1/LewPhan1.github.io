@@ -505,10 +505,11 @@
 
         <article class="project-card" data-reveal data-project="agentic-pbpk">
           <h3>Agentic PBPK Workflow</h3>
-          <p>A multi-agent pipeline that builds a 4-compartment oral PBPK model for midazolam straight from
-             literature and label data — resolving the drug, searching the literature, extracting parameters,
-             checking evidence quality, building and running the model, then critiquing and writing up the result.
-             Pulls live from PubChem, Europe PMC, and openFDA.</p>
+          <p>A seven-agent AI PBPK evidence workflow that searches literature and drug labels for model parameters,
+            extracts and cross-checks quantitative evidence, resolves conflicting sources, converts units, and flags
+            uncertain or corrupted data before anything reaches the model. Uses Europe PMC, openFDA, local papers, and
+            deterministic Python validation, with human approval before running a mechanistic midazolam–ketoconazole
+            PBPK model.</p>
           <div class="project-tags">
             <span class="tag">Python</span>
             <span class="tag">Agent orchestration</span>
