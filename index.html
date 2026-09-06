@@ -12,11 +12,11 @@
 <!--
   ============================================================
   QUICK EDIT GUIDE — search for "EDIT:" to find every spot
-  1. Photo:   swap the initial roundel in #hero-photo for <img src="your-photo.jpg" alt="Lewis">
-  2. Name:    add a surname in <title>, the nav, and the hero if you'd like one shown.
+  1. Photo:   the square photo lives in the About section — swap the src on <img class="about-photo">
+  2. Name:    the name appears in <title> and in the nav.
   3. Contact: update the email and LinkedIn href near the bottom of the page.
   4. Certifications: add entries to the `certifications` array in the <script> tag.
-  5. Project links: the APAP and MTM1/Snx17 cards have no repo link yet — add one
+  5. Project links: the Agentic and MTM1/Snx17 cards have no repo link yet — add one
      once those repos are public, in the project cards below.
   ============================================================
 -->
@@ -158,65 +158,20 @@
   }
   .nav-toggle span { width: 20px; height: 2px; background: var(--ink); display: block; }
 
-  /* ---------- Hero ---------- */
-  #hero {
-    position: relative;
-    padding: calc(64px + var(--space-6)) 0 var(--space-6);
-    overflow: hidden;
-    min-height: 640px;
-    display: flex;
-    align-items: center;
+  /* ---------- About photo ---------- */
+  .about-photo {
+    float: left;
+    width: 165px;
+    height: 165px;
+    object-fit: cover;
+    border-radius: var(--radius-m);
+    border: var(--border);
+    box-shadow: var(--shadow);
+    /* Space on the right and below so the wrapped text doesn't crowd it. */
+    margin: 0.35rem var(--space-3) var(--space-2) 0;
   }
-  .hero-bg {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    max-width: 1160px;
-    margin: 0 auto;
-    pointer-events: none;
-    -webkit-mask-image: linear-gradient(to right, transparent 0%, transparent 58%, black 74%, black 100%);
-    mask-image: linear-gradient(to right, transparent 0%, transparent 58%, black 74%, black 100%);
-  }
-  .hero-bg svg { width: 100%; height: 100%; display: block; }
-
-  .schema-box { fill: none; stroke: var(--ink-soft); stroke-width: 1.5; opacity: 0.4; }
-  .schema-line { fill: none; stroke: var(--ink-soft); stroke-width: 1.4; opacity: 0.28; }
-  .schema-label { font-family: var(--font-mono); font-size: 11px; fill: var(--ink-soft); opacity: 0.55; letter-spacing: 0.04em; }
-  .schema-portal { fill: none; stroke: var(--amber); stroke-width: 1.5; stroke-dasharray: 4 4; opacity: 0.55; }
-  .schema-elim { fill: none; stroke: var(--teal); stroke-width: 1.5; opacity: 0.5; }
-  .schema-elim-label { font-family: var(--font-mono); font-size: 9px; fill: var(--ink-soft); opacity: 0.6; }
-
-  .agent-dot { pointer-events: none; }
-  .agent-commuter { fill: var(--teal); opacity: 0.75; }
-  .agent-jitter { fill: var(--amber); opacity: 0.8; }
-  .agent-roam { fill: var(--ink-soft); opacity: 0.3; }
-
-  .hero-inner { position: relative; z-index: 1; max-width: 760px; }
-
-  .hero-photo-wrap { display: flex; justify-content: flex-start; margin-bottom: var(--space-3); }
-  #hero-photo {
-    width: 176px; height: 176px;
-    border-radius: 50%;
-    background: var(--ink);
-    color: var(--paper);
-    display: flex; align-items: center; justify-content: center;
-    overflow: hidden;
-    font-family: var(--font-display);
-    font-style: italic;
-    font-size: 3.4rem;
-    border: 4px solid var(--paper);
-    box-shadow: 0 0 0 3px rgba(31, 122, 108, 0.35), var(--shadow);
-  }
-  #hero-photo img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
-  h1.hero-title { font-size: var(--fs-hero); }
-  h1.hero-title em { color: var(--teal-dark); font-style: italic; }
-  .hero-statement {
-    margin-top: var(--space-3);
-    max-width: 62ch;
-    color: var(--ink-soft);
-    font-size: 1.05rem;
-  }
-  .hero-ctas { display: flex; gap: var(--space-2); margin-top: var(--space-4); flex-wrap: wrap; }
+  /* Buttons at the foot of the About section. */
+  .about-ctas { display: flex; gap: var(--space-2); margin-top: var(--space-3); flex-wrap: wrap; }
 
   .btn {
     display: inline-flex; align-items: center; gap: 0.5em;
@@ -235,12 +190,18 @@
   .btn-ghost:hover { background: var(--paper-alt); }
 
   /* ---------- Sections ---------- */
-  .section { padding: var(--space-6) 0; }
-  .section-head { max-width: 60ch; margin-bottom: var(--space-5); }
-  .section-head h2 { margin-top: var(--space-2); }
+  .section { padding: var(--space-4) 0; }
+  /* About is the first section on the page, so its top padding has to clear
+     the 64px fixed navbar as well as provide normal breathing room. */
+  #about { padding-top: calc(64px + var(--space-3)); }
+  .section-head { max-width: 60ch; margin-bottom: var(--space-3); }
+  .section-head h2 { margin-top: var(--space-1); }
 
-  .about-body { display: grid; grid-template-columns: 1.3fr 1fr; gap: var(--space-5); align-items: start; }
-  .about-body p.bio { color: var(--ink-soft); font-size: 1.05rem; max-width: 62ch; }
+  .about-body { display: grid; grid-template-columns: 1.5fr 1fr; gap: var(--space-4); align-items: start; }
+  /* The bio was capped at 62ch, narrower than its own column, which forced
+     extra wrapped lines beside the photo. Letting it fill the column makes
+     the block shorter without shrinking any text. */
+  .about-body p.bio { color: var(--ink-soft); font-size: 1.05rem; }
   .hobby-image { aspect-ratio: 1 / 1; border-radius: var(--radius-m); overflow: hidden; border: var(--border); background: var(--paper-alt); }
   .hobby-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .project-meta { font-family: var(--font-mono); font-size: var(--fs-mono); color: var(--ink-soft); margin-top: -0.5em; }
@@ -338,8 +299,8 @@
     .nav-links.open { display: flex; }
     .nav-toggle { display: flex; }
     .project-grid { grid-template-columns: 1fr; }
-    .hero-bg { opacity: 0.5; }
-    #hero { min-height: 0; }
+    /* A 190px float leaves too narrow a text column on a phone. */
+    .about-photo { width: 120px; height: 120px; margin-right: var(--space-2); }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -349,13 +310,124 @@
   }
 
   :focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+  /* ---------- Storyboard ---------- */
+  .storyboard {
+    margin-top: var(--space-4);
+    padding-top: var(--space-3);
+    border-top: var(--border);
+  }
+  .storyboard-head {
+    display: flex; align-items: baseline; gap: var(--space-2);
+    flex-wrap: wrap; margin-bottom: var(--space-3);
+  }
+  .storyboard-head h3 { font-size: var(--fs-h3); }
+  .storyboard-count { font-family: var(--font-mono); font-size: var(--fs-mono); color: var(--ink-soft); }
+
+  .storyboard-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: var(--space-2);
+  }
+  .slide-thumb {
+    padding: 0; border: var(--border); border-radius: var(--radius-m);
+    background: #fff; cursor: zoom-in; overflow: hidden;
+    display: flex; flex-direction: column; text-align: left;
+    font: inherit; color: inherit;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .slide-thumb:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+  .slide-thumb img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; }
+  .slide-thumb .slide-meta {
+    padding: 0.5rem 0.65rem;
+    font-family: var(--font-mono); font-size: 0.68rem;
+    color: var(--ink-soft); line-height: 1.35;
+    border-top: var(--border);
+  }
+  .slide-thumb .slide-num { color: var(--teal-dark); font-weight: 600; }
+
+  .storyboard-empty {
+    border: 1px dashed rgba(24,36,48,0.28);
+    border-radius: var(--radius-m);
+    padding: var(--space-4);
+    font-family: var(--font-mono); font-size: var(--fs-mono);
+    color: var(--ink-soft); text-align: center;
+  }
+
+  /* The button in each card that switches the storyboard. */
+  .storyboard-trigger {
+    margin-top: var(--space-1);
+    align-self: flex-start;
+    background: transparent;
+    border: var(--border);
+    border-radius: var(--radius-s);
+    padding: 0.45em 0.8em;
+    font-family: var(--font-mono); font-size: 0.72rem;
+    color: var(--ink-soft); cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+  .storyboard-trigger:hover { background: var(--paper-alt); color: var(--ink); }
+  .storyboard-trigger[aria-selected="true"] {
+    background: var(--teal); border-color: var(--teal); color: #fff;
+  }
+  .project-card.is-active { box-shadow: 0 0 0 2px var(--teal), var(--shadow); }
+
+  /* ---------- Lightbox ---------- */
+  .lightbox {
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(24, 36, 48, 0.93);
+    display: none; align-items: center; justify-content: center;
+    /* Leave room at the sides for the prev/next buttons. */
+    padding: var(--space-3) 68px;
+  }
+  .lightbox.open { display: flex; }
+  .lightbox figure {
+    margin: 0; max-width: 1500px; width: 100%;
+    display: flex; flex-direction: column; gap: var(--space-2);
+  }
+  .lightbox img {
+    width: 100%; border-radius: var(--radius-m);
+    background: #fff; display: block;
+  }
+  .lightbox figcaption {
+    color: rgba(238, 241, 237, 0.85);
+    font-family: var(--font-mono); font-size: var(--fs-mono);
+    display: flex; justify-content: space-between; gap: var(--space-2);
+    flex-wrap: wrap;
+  }
+  .lightbox-btn {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    background: rgba(238, 241, 237, 0.12);
+    border: 1px solid rgba(238, 241, 237, 0.3);
+    color: #fff; cursor: pointer;
+    width: 44px; height: 44px; border-radius: 50%;
+    font-size: 1.2rem; line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .lightbox-btn:hover { background: rgba(238, 241, 237, 0.25); }
+  .lightbox-prev { left: var(--space-2); }
+  .lightbox-next { right: var(--space-2); }
+  .lightbox-close {
+    position: absolute; top: var(--space-2); right: var(--space-2);
+    width: 40px; height: 40px; border-radius: 50%;
+    background: rgba(238, 241, 237, 0.12);
+    border: 1px solid rgba(238, 241, 237, 0.3);
+    color: #fff; cursor: pointer; font-size: 1.1rem;
+  }
+  .lightbox-close:hover { background: rgba(238, 241, 237, 0.25); }
+
+  @media (max-width: 640px) {
+    .storyboard-strip { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+    .lightbox-btn { width: 38px; height: 38px; }
+    .lightbox { padding: var(--space-2) 46px; }
+  }
+
 </style>
 </head>
 <body>
 
 <header class="nav">
   <div class="nav-inner">
-    <a href="#hero" class="nav-name">Dr. Lewis P Hancock</a> <!-- EDIT: add a surname here if you'd like one shown -->
+    <a href="#about" class="nav-name">Dr. Lewis P Hancock</a> <!-- EDIT: add a surname here if you'd like one shown -->
     <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
       <span></span><span></span><span></span>
     </button>
@@ -372,87 +444,6 @@
 
 <main>
 
-  <!-- ================= HERO ================= -->
-  <section id="hero">
-    <div class="hero-bg" aria-hidden="true">
-      <svg viewBox="0 0 900 520" preserveAspectRatio="xMidYMid meet">
-        <defs>
-          <marker id="arrowAmber" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-            <path d="M0,0 L10,5 L0,10 z" fill="var(--amber)"/>
-          </marker>
-          <marker id="arrowTeal" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-            <path d="M0,0 L10,5 L0,10 z" fill="var(--teal)"/>
-          </marker>
-        </defs>
-
-        <g id="schemaStatic">
-          <!-- Lung -->
-          <rect class="schema-box" x="690" y="30" width="150" height="54" rx="6"/>
-          <text class="schema-label" x="765" y="61" text-anchor="middle">LUNG</text>
-
-          <!-- central trunk -->
-          <line class="schema-line" x1="765" y1="84" x2="765" y2="400"/>
-
-          <!-- Row 1: Gut / Liver -->
-          <rect class="schema-box" x="650" y="110" width="90" height="50" rx="6"/>
-          <text class="schema-label" x="695" y="139" text-anchor="middle">GUT</text>
-          <rect class="schema-box" x="790" y="110" width="90" height="50" rx="6"/>
-          <text class="schema-label" x="835" y="139" text-anchor="middle">LIVER</text>
-          <line class="schema-line" x1="765" y1="135" x2="740" y2="135"/>
-          <line class="schema-line" x1="765" y1="135" x2="790" y2="135"/>
-
-          <!-- Row 2: Muscle / Kidney -->
-          <rect class="schema-box" x="650" y="210" width="90" height="50" rx="6"/>
-          <text class="schema-label" x="695" y="239" text-anchor="middle">MUSCLE</text>
-          <rect class="schema-box" x="790" y="210" width="90" height="50" rx="6"/>
-          <text class="schema-label" x="835" y="239" text-anchor="middle">KIDNEY</text>
-          <line class="schema-line" x1="765" y1="235" x2="740" y2="235"/>
-          <line class="schema-line" x1="765" y1="235" x2="790" y2="235"/>
-
-          <!-- Row 3: Skin / Adipose -->
-          <rect class="schema-box" x="650" y="310" width="90" height="50" rx="6"/>
-          <text class="schema-label" x="695" y="339" text-anchor="middle">SKIN</text>
-          <rect class="schema-box" x="790" y="310" width="90" height="50" rx="6"/>
-          <text class="schema-label" x="835" y="339" text-anchor="middle">ADIPOSE</text>
-          <line class="schema-line" x1="765" y1="335" x2="740" y2="335"/>
-          <line class="schema-line" x1="765" y1="335" x2="790" y2="335"/>
-
-          <!-- Portal vein: Gut -> Liver (first-pass) -->
-          <path class="schema-portal" d="M740,155 Q765,190 790,155" marker-end="url(#arrowAmber)"/>
-
-          <!-- Elimination -->
-          <line class="schema-elim" x1="835" y1="160" x2="870" y2="192" marker-end="url(#arrowTeal)"/>
-          <text class="schema-elim-label" x="874" y="198">CLh</text>
-          <line class="schema-elim" x1="835" y1="260" x2="870" y2="292" marker-end="url(#arrowTeal)"/>
-          <text class="schema-elim-label" x="874" y="298">CLr</text>
-        </g>
-
-        <g id="agentsLayer"></g>
-      </svg>
-    </div>
-
-    <div class="wrap hero-inner">
-      <div class="hero-photo-wrap">
-        <div id="hero-photo"><img src="profile_pic.jpg" alt="Lewis"></div> <!-- EDIT: replace with <img src="your-photo.jpg" alt="Lewis"> -->
-      </div>
-      <span class="eyebrow">Mechanistic Modeller</span>
-      <h1 class="hero-title" style="margin-top: 0.6em;">Looking to apply my love of mechanistic modelling to Model-Informed Drug Development</h1>
-      <p class="hero-statement">
-        I’m currently working towards a transition into PBPK and quantitative drug
-        development, building on my background in mechanistic modelling and experimental
-        science. Outside of my research, I’ve been developing my knowledge through
-        training courses and by attending international meetings such as PAGE and ISSX,
-        where I’ve had the opportunity to learn from and connect with researchers working
-        across pharmacometrics, DMPK, and model-informed drug development.
-      </p>
-      <div class="hero-ctas">
-        <a href="#work" class="btn btn-primary">View the work ↓</a>
-        <a href="#contact" class="btn btn-ghost">Get in touch</a>
-        <a href="https://scholar.google.com/citations?user=XzR_N9UAAAAJ&hl=en" target="_blank" rel="noopener" class="btn btn-ghost">Google Scholar</a>
-      </div>
-    </div>
-  </section>
-
   <!-- ================= ABOUT ================= -->
   <section id="about" class="section">
     <div class="wrap">
@@ -462,14 +453,15 @@
       </div>
       <div class="about-body">
         <p class="bio" data-reveal>
-          I’m a research scientist with a particular interest in understanding pharmacometrics through mechanistic modelling. My work has taken me from agent-based models and high-performance computing during my PhD to ODE-based modelling and quantitative experiments in my current postdoctoral research at the University of Sheffield. Along the way, an internship at Certara Simcyp sparked a growing interest in PBPK and pharmacometrics, which I’ve continued to pursue through certified training, scientific meetings, and my own modelling projects. This blog is partly a record of that journey as I continue developing my skills in PBPK, DMPK, AI, and model-informed drug development.
+          <img class="about-photo" src="profile_pic.jpg" alt="Lewis Hancock">
+          I’m a research scientist with a particular interest in pharmacometrics and quantitative drug development through mechanistic modelling. My work has taken me from agent-based models and experimental bioscience during my PhD to ODE-based modelling and membrane reconstitution in my current postdoctoral research at the University of Sheffield. An internship at Certara Simcyp sparked my interest in PB/PK and pharmacometrics, which I’ve continued to develop through certified training, independent modelling projects, and meetings such as PAGE and ISSX. This blog is a record of that journey as I build my skills in PBPK/DMPK, AI, and model-informed drug development.
         </p>
         <div class="skills-card" data-reveal>
           <h3>Tools & methods</h3>
           <div class="tag-list">
             <span class="tag">Python</span>
-            <span class="tag">Agent-based modeling</span>
-            <span class="tag">PBPK/PD modeling</span>
+            <span class="tag">Agent-based modelling</span>
+            <span class="tag">PBPK/PD modelling</span>
             <span class="tag">ODE-based simulation</span>
             <span class="tag">Parameter fitting</span>
             <span class="tag">Sensitivity analysis</span>
@@ -477,6 +469,11 @@
             <span class="tag">scipy / differential equations</span>
           </div>
         </div>
+      </div>
+      <div class="about-ctas" data-reveal>
+        <a href="#work" class="btn btn-primary">View projects ↓</a>
+        <a href="#contact" class="btn btn-ghost">Get in touch</a>
+        <a href="https://scholar.google.com/citations?user=XzR_N9UAAAAJ&hl=en" target="_blank" rel="noopener" class="btn btn-ghost">Google Scholar</a>
       </div>
     </div>
   </section>
@@ -486,11 +483,27 @@
     <div class="wrap">
       <div class="section-head" data-reveal>
         <span class="eyebrow">Selected work</span>
-        <h2>Models, pipelines, and the code behind them</h2>
+        <h2>Personal projects that interest me :)</h2>
       </div>
 
       <div class="project-grid">
-        <article class="project-card" data-reveal>
+        <article class="project-card" data-reveal data-project="midazolam-pbpk">
+          <h3>Midazolam PB/PK DDI</h3>
+          <p>Modelling midazolam pharmacokinetics and ketoconazole-mediated CYP3A4 inhibition using a custom-built 
+            Perfusion-limited PBPK model. Calibrating IV disposition, translating to oral dosing, validating against
+            clinical PK and DDI datasets, and applying sensitivity analysis to explore the drivers of AUC, Cmax, half-life, and AUCR.</p>
+          <div class="project-tags">
+            <span class="tag">Python</span>
+            <span class="tag">ODEs (solve_ivp)</span>
+            <span class="tag">PB/PK</span>
+            <span class="tag">PK fitting</span>
+          </div>
+          <a class="project-link" href="https://github.com/LewPhan1/pbpk_agentic_workflow_a" target="_blank" rel="noopener">View repository →</a>
+          <button class="storyboard-trigger" data-target="midazolam-pbpk"
+                  aria-selected="true" aria-controls="storyboard">View storyboard · 12 slides</button>
+        </article>
+
+        <article class="project-card" data-reveal data-project="agentic-pbpk">
           <h3>Agentic PBPK Workflow</h3>
           <p>A multi-agent pipeline that builds a 4-compartment oral PBPK model for midazolam straight from
              literature and label data — resolving the drug, searching the literature, extracting parameters,
@@ -501,34 +514,36 @@
             <span class="tag">Agent orchestration</span>
             <span class="tag">Artificial intelligence</span>
           </div>
-          <a class="project-link" href="https://github.com/LewPhan1/pbpk_agentic_workflow_a" target="_blank" rel="noopener">View repository →</a>
-        </article>
-
-        <article class="project-card" data-reveal>
-          <h3>APAP PBPK Reproduction</h3>
-          <p>A 7-compartment perfusion-limited PBPK model reproducing Figure 4 of Sluka et al. (2016, PLOS ONE)
-             for acetaminophen pharmacokinetics — parameter fitting, sensitivity analysis, and non-compartmental
-             analysis (NCA) metrics, cross-checked against a BioModels SBML reference.</p>
-          <div class="project-tags">
-            <span class="tag">Python</span>
-            <span class="tag">scipy · solve_ivp (LSODA)</span>
-            <span class="tag">NCA</span>
-          </div>
           <!-- EDIT: add a repo link here once this project is public -->
+          <button class="storyboard-trigger" data-target="agentic-pbpk"
+                  aria-selected="false" aria-controls="storyboard">Storyboard · none yet</button>
         </article>
 
-        <article class="project-card" data-reveal>
+        <article class="project-card" data-reveal data-project="mtm1-snx17">
           <h3>MTM1 / Snx17 Membrane Kinetics</h3>
-          <p>Modeling lipid-phosphatase reaction kinetics on membranes — PI3P catalysis, probe binding, and cargo
+          <p>Modelling lipid-phosphatase reaction kinetics on membranes — PI3P catalysis, probe binding, and cargo
              interactions — porting an ODE simulation from Python to Julia for performance, alongside an ongoing
-             evaluation of agent-based modeling frameworks for the spatial version of the system.</p>
+             evaluation of agent-based modelling frameworks for the spatial version of the system.</p>
           <div class="project-tags">
             <span class="tag">Julia</span>
             <span class="tag">DifferentialEquations.jl (Rodas5)</span>
-            <span class="tag">Agent-based modeling</span>
+            <span class="tag">Agent-based modelling</span>
           </div>
           <!-- EDIT: add a repo link here once this project is public -->
+          <button class="storyboard-trigger" data-target="mtm1-snx17"
+                  aria-selected="false" aria-controls="storyboard">Storyboard · none yet</button>
         </article>
+      </div>
+
+      <!-- Storyboard: populated by JS from the STORYBOARDS object in the
+           script at the bottom of this file. Opens on the Midazolam PBPK
+           slides and switches when another project's button is clicked. -->
+      <div class="storyboard" id="storyboard" aria-live="polite">
+        <div class="storyboard-head">
+          <h3 id="storyboard-title">Midazolam PBPK Workflow</h3>
+          <span class="storyboard-count" id="storyboard-count"></span>
+        </div>
+        <div class="storyboard-strip" id="storyboard-strip"></div>
       </div>
     </div>
   </section>
@@ -578,7 +593,7 @@
             modelling and experiment, using each to inform and refine the other.</p>
           <div class="project-tags">
             <span class="tag">Python</span>
-            <span class="tag">Agent-Based Modeling</span>
+            <span class="tag">Agent-Based Modelling</span>
             <span class="tag">In vitro biochemistry</span>
           </div>
           <a class="project-link" href="https://etheses.whiterose.ac.uk/id/eprint/34046/" target="_blank" rel="noopener">View PhD thesis →</a>
@@ -644,6 +659,20 @@
 
 </main>
 
+<!-- Full-size slide viewer -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Slide viewer">
+  <button class="lightbox-close" id="lightboxClose" aria-label="Close viewer">&#10005;</button>
+  <button class="lightbox-btn lightbox-prev" id="lightboxPrev" aria-label="Previous slide">&#8249;</button>
+  <button class="lightbox-btn lightbox-next" id="lightboxNext" aria-label="Next slide">&#8250;</button>
+  <figure>
+    <img id="lightboxImg" src="" alt="">
+    <figcaption>
+      <span id="lightboxCaption"></span>
+      <span id="lightboxCounter"></span>
+    </figcaption>
+  </figure>
+</div>
+
 <footer>
   <div class="wrap">
     <span>© <span id="year"></span> Lewis Hancock. Built with plain HTML, CSS, and JavaScript.</span>
@@ -656,11 +685,11 @@
   // Each entry: { name: "Certification name", issuer: "Issuing organization", year: "2025" }
   const certifications = [
     { name: "Four-day PBPK Intensive Workshop", issuer: "Certara Simcyp", year: "2025" },
-    { name: "(103-OD) Fundamentals of Pharmacokinetics", issuer: "Cetara University", year: "2026" },
-    { name: "(105-OD) Noncompartmental Data Analysis", issuer: "Cetara University", year: "2026" },
-    { name: "(122-OD-CERT) Phoenix WinNonlin (Part 1) NCA Certification Course", issuer: "Cetara University", year: "2026" },
-    { name: "(123-OD-CERT) Phoenix WinNonlin (Part 2) PK/PD Modeling Certification Course", issuer: "Cetara University", year: "2026" },
-    { name: "[PAGE2026B] Workshop: Writing population PK & PKPD modules in PML and running them in R", issuer: "Cetara University", year: "2026" },
+    { name: "(103-OD) Fundamentals of Pharmacokinetics", issuer: "Certara University", year: "2026" },
+    { name: "(105-OD) Noncompartmental Data Analysis", issuer: "Certara University", year: "2026" },
+    { name: "(122-OD-CERT) Phoenix WinNonlin (Part 1) NCA Certification Course", issuer: "Certara University", year: "2026" },
+    { name: "(123-OD-CERT) Phoenix WinNonlin (Part 2) PK/PD Modelling Certification Course", issuer: "Certara University", year: "2026" },
+    { name: "[PAGE2026B] Workshop: Writing population PK & PKPD modules in PML and running them in R", issuer: "Certara University", year: "2026" },
     { name: "PAGE 2026: Mastering PBPK with PK-Sim: Basics to DDI", issuer: "ESQ Labs", year: "2026" },
     // { name: "Example Certification", issuer: "Example Institute", year: "2025" },
   ];
@@ -699,89 +728,155 @@
     if (reduceMotion) { el.classList.add('in-view'); } else { io.observe(el); }
   });
 
-  // ---- Agent-based simulation layered over the PBPK schema ----
-  const NS = 'http://www.w3.org/2000/svg';
-  const layer = document.getElementById('agentsLayer');
+  // ---- Storyboard -------------------------------------------------------
+  // To add slides for another project: drop the images in
+  // slides/<project-key>/ and fill in its `slides` array below. The key must
+  // match the data-target on that project's button.
+  const STORYBOARDS = {
+    'midazolam-pbpk': {
+      title: 'Midazolam PB/PK DDI',
+      dir: 'slides/midazolam-pbpk',
+      slides: [
+        'Overview and aims',
+        'Model structure: perfusion-limited, midazolam + ketoconazole',
+        'Fitting midazolam to IV data, scaling effective Vss',
+        'Perfusion-limited model was sufficient to fit IV data',
+        'Simulated oral data following IV calibration',
+        'Local sensitivity analysis: AUC(0-inf)',
+        'Local sensitivity analysis: Cmax',
+        'Local sensitivity analysis: terminal half-life',
+        'DDI effect on midazolam from uncalibrated ketoconazole',
+        'Local sensitivity analysis: AUCR(0-inf)',
+        'Ketoconazole at steady state',
+        'Outcome of the project'
+      ]
+    },
+    'agentic-pbpk':  { title: 'Agentic PBPK Workflow',        dir: null, slides: [] },
+    'mtm1-snx17': { title: 'MTM1 / Snx17 Membrane Kinetics', dir: null, slides: [] }
+  };
 
-  const LUNG = [765, 57], TOP = [765, 84];
-  const TRUNK1 = [765, 135], TRUNK2 = [765, 235], TRUNK3 = [765, 335];
-  const GUT = [695, 135], LIVER = [835, 135];
-  const MUSCLE = [695, 235], KIDNEY = [835, 235];
-  const SKIN = [695, 335], ADIPOSE = [835, 335];
+  const strip = document.getElementById('storyboard-strip');
+  const sbTitle = document.getElementById('storyboard-title');
+  const sbCount = document.getElementById('storyboard-count');
+  const triggers = Array.from(document.querySelectorAll('.storyboard-trigger'));
 
-  function dist(a, b) { return Math.hypot(a[0] - b[0], a[1] - b[1]); }
+  // The slide list currently on screen, used by the lightbox.
+  let currentSlides = [];
+  let currentIndex = 0;
 
-  function makeDot(cls, r) {
-    const el = document.createElementNS(NS, 'circle');
-    el.setAttribute('r', r);
-    el.setAttribute('class', 'agent-dot ' + cls);
-    layer.appendChild(el);
-    return el;
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function showStoryboard(key) {
+    const board = STORYBOARDS[key];
+    if (!board) return;
+
+    sbTitle.textContent = board.title;
+    strip.innerHTML = '';
+
+    // Mark the active card and button.
+    triggers.forEach(btn => {
+      const on = btn.dataset.target === key;
+      btn.setAttribute('aria-selected', on ? 'true' : 'false');
+      btn.closest('.project-card').classList.toggle('is-active', on);
+    });
+
+    if (!board.slides.length) {
+      currentSlides = [];
+      sbCount.textContent = '';
+      strip.innerHTML =
+        '<div class="storyboard-empty">No slides for this project yet.</div>';
+      return;
+    }
+
+    sbCount.textContent = board.slides.length + ' slides';
+    currentSlides = board.slides.map((caption, i) => ({
+      caption,
+      full:  board.dir + '/slide-'  + pad(i + 1) + '.jpg',
+      thumb: board.dir + '/thumb-' + pad(i + 1) + '.jpg'
+    }));
+
+    currentSlides.forEach((slide, i) => {
+      const button = document.createElement('button');
+      button.className = 'slide-thumb';
+      button.type = 'button';
+      button.setAttribute('aria-label', 'Open slide ' + (i + 1) + ': ' + slide.caption);
+      button.innerHTML =
+        '<img src="' + slide.thumb + '" alt="" loading="lazy">' +
+        '<span class="slide-meta"><span class="slide-num">' + pad(i + 1) +
+        '</span> ' + slide.caption + '</span>';
+      button.addEventListener('click', () => openLightbox(i));
+      strip.appendChild(button);
+    });
   }
 
-  const commuterRoutes = [
-    [LUNG, TOP, TRUNK1, GUT],
-    [LUNG, TOP, TRUNK1, LIVER],
-    [LUNG, TOP, TRUNK2, MUSCLE],
-    [LUNG, TOP, TRUNK2, KIDNEY],
-    [LUNG, TOP, TRUNK3, SKIN],
-    [LUNG, TOP, TRUNK3, ADIPOSE],
-  ];
-
-  const agents = commuterRoutes.map((route, i) => ({
-    el: makeDot('agent-commuter', 3.5),
-    waypoints: route, idx: 0, dir: 1,
-    speed: 0.015 + (i % 3) * 0.004,
-    pos: [...route[0]],
-  }));
-
-  const jitterBoxes = [
-    { x: 650, y: 110, w: 90, h: 50 },
-    { x: 790, y: 110, w: 90, h: 50 },
-    { x: 790, y: 310, w: 90, h: 50 },
-  ];
-  jitterBoxes.forEach(box => {
-    const start = [box.x + box.w / 2, box.y + box.h / 2];
-    agents.push({ el: makeDot('agent-jitter', 3), jitter: true, box, pos: [...start], target: [...start], speed: 0.025 });
+  triggers.forEach(btn => {
+    btn.addEventListener('click', () => {
+      showStoryboard(btn.dataset.target);
+      document.getElementById('storyboard').scrollIntoView({
+        behavior: reduceMotion ? 'auto' : 'smooth',
+        block: 'nearest'
+      });
+    });
   });
 
-  for (let i = 0; i < 2; i++) {
-    const start = [600 + Math.random() * 290, Math.random() * 520];
-    agents.push({ el: makeDot('agent-roam', 3), roam: true, pos: start, target: [600 + Math.random() * 290, Math.random() * 520], speed: 0.008 });
+  // ---- Lightbox ---------------------------------------------------------
+  const lightbox = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lightboxImg');
+  const lbCaption = document.getElementById('lightboxCaption');
+  const lbCounter = document.getElementById('lightboxCounter');
+  let lastFocused = null;
+
+  function renderSlide() {
+    const slide = currentSlides[currentIndex];
+    if (!slide) return;
+    lbImg.src = slide.full;
+    lbImg.alt = 'Slide ' + (currentIndex + 1) + ': ' + slide.caption;
+    lbCaption.textContent = slide.caption;
+    lbCounter.textContent = (currentIndex + 1) + ' / ' + currentSlides.length;
   }
 
-  function tick() {
-    agents.forEach(a => {
-      let target;
-      if (a.jitter) {
-        if (dist(a.pos, a.target) < 2) {
-          a.target = [a.box.x + 10 + Math.random() * (a.box.w - 20), a.box.y + 10 + Math.random() * (a.box.h - 20)];
-        }
-        target = a.target;
-      } else if (a.roam) {
-        if (dist(a.pos, a.target) < 3) { a.target = [600 + Math.random() * 290, Math.random() * 520]; }
-        target = a.target;
-      } else {
-        if (dist(a.pos, a.waypoints[a.idx]) < 3) {
-          a.idx += a.dir;
-          if (a.idx >= a.waypoints.length) { a.idx = a.waypoints.length - 2; a.dir = -1; }
-          if (a.idx < 0) { a.idx = 1; a.dir = 1; }
-        }
-        target = a.waypoints[a.idx];
-      }
-      a.pos[0] += (target[0] - a.pos[0]) * a.speed;
-      a.pos[1] += (target[1] - a.pos[1]) * a.speed;
-      a.el.setAttribute('cx', a.pos[0].toFixed(1));
-      a.el.setAttribute('cy', a.pos[1].toFixed(1));
-    });
-    requestAnimationFrame(tick);
+  function openLightbox(index) {
+    if (!currentSlides.length) return;
+    lastFocused = document.activeElement;
+    currentIndex = index;
+    renderSlide();
+    lightbox.classList.add('open');
+    // Stop the page behind from scrolling while the viewer is open.
+    document.body.style.overflow = 'hidden';
+    document.getElementById('lightboxClose').focus();
   }
 
-  if (!reduceMotion) {
-    requestAnimationFrame(tick);
-  } else {
-    agents.forEach(a => { a.el.setAttribute('cx', a.pos[0]); a.el.setAttribute('cy', a.pos[1]); });
+  function closeLightbox() {
+    lightbox.classList.remove('open');
+    document.body.style.overflow = '';
+    if (lastFocused) lastFocused.focus();
   }
+
+  function step(delta) {
+    if (!currentSlides.length) return;
+    // Wrap around at both ends.
+    currentIndex = (currentIndex + delta + currentSlides.length) % currentSlides.length;
+    renderSlide();
+  }
+
+  document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
+  document.getElementById('lightboxPrev').addEventListener('click', () => step(-1));
+  document.getElementById('lightboxNext').addEventListener('click', () => step(1));
+
+  // Clicking the dark backdrop (but not the image itself) closes the viewer.
+  lightbox.addEventListener('click', event => {
+    if (event.target === lightbox) closeLightbox();
+  });
+
+  document.addEventListener('keydown', event => {
+    if (!lightbox.classList.contains('open')) return;
+    if (event.key === 'Escape') closeLightbox();
+    if (event.key === 'ArrowLeft') step(-1);
+    if (event.key === 'ArrowRight') step(1);
+  });
+
+  // Open on the Midazolam PBPK slides by default.
+  showStoryboard('midazolam-pbpk');
 </script>
 
 </body>
