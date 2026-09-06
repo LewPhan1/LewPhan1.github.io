@@ -218,7 +218,10 @@
   .skills-card h3 { font-size: 0.85rem; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-soft); font-weight: 500; }
 
   /* ---------- Work ---------- */
-  .project-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); }
+  /* auto-fit adapts to however many cards are present: the Work section now
+     has two and Experience has three, and both fill the row properly.
+     Empty tracks collapse, so two cards share the full width. */
+  .project-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--space-3); }
   .project-card {
     border: var(--border);
     border-radius: var(--radius-m);
@@ -498,7 +501,7 @@
             <span class="tag">PB/PK</span>
             <span class="tag">PK fitting</span>
           </div>
-          <a class="project-link" href="https://github.com/LewPhan1/pbpk_agentic_workflow_a" target="_blank" rel="noopener">View repository →</a>
+          <a class="project-link" href="https://github.com/LewPhan1/midazolam-ketoconazole-pbpk" target="_blank" rel="noopener">View repository →</a>
           <button class="storyboard-trigger" data-target="midazolam-pbpk"
                   aria-selected="true" aria-controls="storyboard">View storyboard · 12 slides</button>
         </article>
@@ -515,25 +518,11 @@
             <span class="tag">Agent orchestration</span>
             <span class="tag">Artificial intelligence</span>
           </div>
-          <!-- EDIT: add a repo link here once this project is public -->
+          <a class="project-link" href="https://github.com/LewPhan1/literature_PBPK_parameter_agents" target="_blank" rel="noopener">View repository →</a>
           <button class="storyboard-trigger" data-target="agentic-pbpk"
-                  aria-selected="false" aria-controls="storyboard">Storyboard · none yet</button>
+                  aria-selected="false" aria-controls="storyboard">View storyboard · 9 slides</button>
         </article>
 
-        <article class="project-card" data-reveal data-project="mtm1-snx17">
-          <h3>MTM1 / Snx17 Membrane Kinetics</h3>
-          <p>Modelling lipid-phosphatase reaction kinetics on membranes — PI3P catalysis, probe binding, and cargo
-             interactions — porting an ODE simulation from Python to Julia for performance, alongside an ongoing
-             evaluation of agent-based modelling frameworks for the spatial version of the system.</p>
-          <div class="project-tags">
-            <span class="tag">Julia</span>
-            <span class="tag">DifferentialEquations.jl (Rodas5)</span>
-            <span class="tag">Agent-based modelling</span>
-          </div>
-          <!-- EDIT: add a repo link here once this project is public -->
-          <button class="storyboard-trigger" data-target="mtm1-snx17"
-                  aria-selected="false" aria-controls="storyboard">Storyboard · none yet</button>
-        </article>
       </div>
 
       <!-- Storyboard: populated by JS from the STORYBOARDS object in the
@@ -752,8 +741,21 @@
         'Outcome of the project'
       ]
     },
-    'agentic-pbpk':  { title: 'Agentic PBPK Workflow',        dir: null, slides: [] },
-    'mtm1-snx17': { title: 'MTM1 / Snx17 Membrane Kinetics', dir: null, slides: [] }
+    'agentic-pbpk': {
+      title: 'Agentic PBPK Workflow',
+      dir: 'slides/agentic-pbpk',
+      slides: [
+        'Overview and aims',
+        'Agentic workflow of the final project',
+        'Structured flow between AI modules, with guardrails',
+        'Example output: PDF corruption safeguard',
+        'Example output: conflicting evidence',
+        'Example output: AI and user decisions are retained and documented',
+        'Example output: three-parameter run',
+        'Example output: five-parameter run final reports',
+        'Outcome of the project'
+      ]
+    }
   };
 
   const strip = document.getElementById('storyboard-strip');
