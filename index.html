@@ -202,8 +202,71 @@
      extra wrapped lines beside the photo. Letting it fill the column makes
      the block shorter without shrinking any text. */
   .about-body p.bio { color: var(--ink-soft); font-size: 1.05rem; }
-  .hobby-image { aspect-ratio: 1 / 1; border-radius: var(--radius-m); overflow: hidden; border: var(--border); background: var(--paper-alt); }
-  .hobby-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  /* ---------- Hobby carousel ---------- */
+  .hobby-carousel { position: relative; }
+  .hobby-viewport {
+    /* All six images are 4:3 (within half a percent), so nothing letterboxes
+       and nothing is meaningfully cropped. */
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius-m);
+    overflow: hidden;
+    border: var(--border);
+    background: var(--paper-alt);
+    position: relative;
+    touch-action: pan-y;          /* let vertical page scroll through */
+    cursor: grab;
+  }
+  .hobby-viewport:active { cursor: grabbing; }
+  .hobby-track {
+    display: flex;
+    height: 100%;
+    transition: transform 0.35s cubic-bezier(.4, 0, .2, 1);
+    will-change: transform;
+  }
+  .hobby-track.no-anim { transition: none; }
+  .hobby-slide { flex: 0 0 100%; height: 100%; }
+  .hobby-slide img {
+    width: 100%; height: 100%;
+    object-fit: cover;            /* images already match the frame ratio */
+    display: block;
+    -webkit-user-drag: none; user-select: none;
+  }
+
+  .hobby-caption {
+    margin-top: var(--space-1);
+    font-family: var(--font-mono); font-size: 0.7rem;
+    color: var(--ink-soft); min-height: 2.2em;
+    display: flex; justify-content: space-between; gap: var(--space-2);
+  }
+  .hobby-counter { white-space: nowrap; }
+
+  .hobby-arrow {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 34px; height: 34px; border-radius: 50%;
+    background: rgba(238, 241, 237, 0.9);
+    border: var(--border); color: var(--ink);
+    cursor: pointer; font-size: 1rem; line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity 0.2s ease, background 0.15s ease;
+  }
+  .hobby-carousel:hover .hobby-arrow,
+  .hobby-arrow:focus-visible { opacity: 1; }
+  .hobby-arrow:hover { background: #fff; }
+  .hobby-prev { left: var(--space-1); }
+  .hobby-next { right: var(--space-1); }
+
+  .hobby-dots { display: flex; gap: 6px; justify-content: center; margin-top: var(--space-1); }
+  .hobby-dot {
+    width: 7px; height: 7px; padding: 0; border-radius: 50%;
+    border: 1px solid var(--ink-soft); background: transparent;
+    cursor: pointer; transition: background 0.15s ease;
+  }
+  .hobby-dot[aria-current="true"] { background: var(--teal); border-color: var(--teal); }
+
+  @media (hover: none) {
+    /* On touch devices there is no hover, so keep the arrows visible. */
+    .hobby-arrow { opacity: 1; }
+  }
   .project-meta { font-family: var(--font-mono); font-size: var(--fs-mono); color: var(--ink-soft); margin-top: -0.5em; }
   .tag-list { display: flex; flex-wrap: wrap; gap: 0.5em; margin-top: var(--space-2); }
   .tag {
@@ -625,8 +688,21 @@
           downtime is spent reading fantasy and science fiction, expanding my worldbuilding
           projects, or slowly improving my Mandarin Chinese.
         </p>
-        <div class="hobby-image" data-reveal>
-          <img src="art_pic.jpg" alt="A hobby photo"> <!-- EDIT: swap in a photo of a hobby — this is a placeholder -->
+        <!-- Swipeable hobby carousel. To change the images, edit the HOBBIES
+             array in the script at the bottom of this file and drop matching
+             files into the hobbies/ folder. -->
+        <div class="hobby-carousel" data-reveal>
+          <div class="hobby-viewport" id="hobbyViewport" tabindex="0"
+               role="region" aria-roledescription="carousel" aria-label="Hobby photos">
+            <div class="hobby-track" id="hobbyTrack"></div>
+          </div>
+          <button class="hobby-arrow hobby-prev" id="hobbyPrev" aria-label="Previous photo">&#8249;</button>
+          <button class="hobby-arrow hobby-next" id="hobbyNext" aria-label="Next photo">&#8250;</button>
+          <div class="hobby-caption">
+            <span id="hobbyCaption"></span>
+            <span class="hobby-counter" id="hobbyCounter"></span>
+          </div>
+          <div class="hobby-dots" id="hobbyDots"></div>
         </div>
       </div>
     </div>
@@ -880,6 +956,115 @@
 
   // Open on the Midazolam PBPK slides by default.
   showStoryboard('midazolam-pbpk');
+  // ---- Hobby carousel ---------------------------------------------------
+  // Order here is the order shown. Files live in hobbies/.
+  const HOBBIES = [
+    { src: 'hobbies/hobby-01.jpg', caption: 'Worldbuilding sketchbook: city concepts' },
+    { src: 'hobbies/hobby-02.jpg', caption: 'Solo trekking' },
+    { src: 'hobbies/hobby-03.jpg', caption: '3D city assets built in Blender' },
+    { src: 'hobbies/hobby-04.jpg', caption: 'Pencil and pen concept work' },
+    { src: 'hobbies/hobby-05.jpg', caption: 'Wild camping on a solo trek' },
+    { src: 'hobbies/hobby-06.jpg', caption: 'Castle and bridge assets in Blender' }
+  ];
+
+  const hobbyTrack = document.getElementById('hobbyTrack');
+  const hobbyViewport = document.getElementById('hobbyViewport');
+  const hobbyCaption = document.getElementById('hobbyCaption');
+  const hobbyCounter = document.getElementById('hobbyCounter');
+  const hobbyDots = document.getElementById('hobbyDots');
+  let hobbyIndex = 0;
+
+  // Build the slides and the dot controls.
+  HOBBIES.forEach((item, i) => {
+    const slide = document.createElement('div');
+    slide.className = 'hobby-slide';
+    const img = document.createElement('img');
+    img.src = item.src;
+    img.alt = item.caption;
+    // Only the first image blocks initial render; the rest load as needed.
+    img.setAttribute('loading', i === 0 ? 'eager' : 'lazy');
+    img.draggable = false;
+    slide.appendChild(img);
+    hobbyTrack.appendChild(slide);
+
+    const dot = document.createElement('button');
+    dot.className = 'hobby-dot';
+    dot.type = 'button';
+    dot.setAttribute('aria-label', 'Go to photo ' + (i + 1));
+    dot.addEventListener('click', () => goToHobby(i));
+    hobbyDots.appendChild(dot);
+  });
+
+  function goToHobby(index, animate = true) {
+    // Clamp rather than wrap, so a swipe past the end doesn't jump the user
+    // back to the start unexpectedly.
+    hobbyIndex = Math.max(0, Math.min(index, HOBBIES.length - 1));
+    hobbyTrack.classList.toggle('no-anim', !animate || reduceMotion);
+    hobbyTrack.style.transform = 'translateX(' + (-hobbyIndex * 100) + '%)';
+    hobbyCaption.textContent = HOBBIES[hobbyIndex].caption;
+    hobbyCounter.textContent = (hobbyIndex + 1) + ' / ' + HOBBIES.length;
+    Array.from(hobbyDots.children).forEach((dot, i) => {
+      dot.setAttribute('aria-current', i === hobbyIndex ? 'true' : 'false');
+    });
+  }
+
+  document.getElementById('hobbyPrev').addEventListener('click', () => goToHobby(hobbyIndex - 1));
+  document.getElementById('hobbyNext').addEventListener('click', () => goToHobby(hobbyIndex + 1));
+
+  // Keyboard, once the panel has focus.
+  hobbyViewport.addEventListener('keydown', event => {
+    if (event.key === 'ArrowLeft')  { event.preventDefault(); goToHobby(hobbyIndex - 1); }
+    if (event.key === 'ArrowRight') { event.preventDefault(); goToHobby(hobbyIndex + 1); }
+  });
+
+  // ---- Swipe / drag ----
+  // Tracks a pointer from press to release. While dragging we move the track
+  // with the finger; on release, a drag past a threshold changes slide and
+  // anything less snaps back.
+  let dragStartX = 0, dragDelta = 0, dragging = false;
+
+  function dragStart(clientX) {
+    dragging = true;
+    dragStartX = clientX;
+    dragDelta = 0;
+    hobbyTrack.classList.add('no-anim');
+  }
+
+  function dragMove(clientX) {
+    if (!dragging) return;
+    dragDelta = clientX - dragStartX;
+    const width = hobbyViewport.clientWidth || 1;
+    let offset = (-hobbyIndex * 100) + (dragDelta / width) * 100;
+    // Add resistance when pulling past either end.
+    if ((hobbyIndex === 0 && dragDelta > 0) ||
+        (hobbyIndex === HOBBIES.length - 1 && dragDelta < 0)) {
+      offset = (-hobbyIndex * 100) + (dragDelta / width) * 35;
+    }
+    hobbyTrack.style.transform = 'translateX(' + offset + '%)';
+  }
+
+  function dragEnd() {
+    if (!dragging) return;
+    dragging = false;
+    hobbyTrack.classList.remove('no-anim');
+    // Change slide on a drag of more than a fifth of the panel, or 60px.
+    const threshold = Math.min(hobbyViewport.clientWidth * 0.2, 60);
+    if (dragDelta <= -threshold)      goToHobby(hobbyIndex + 1);
+    else if (dragDelta >= threshold)  goToHobby(hobbyIndex - 1);
+    else                              goToHobby(hobbyIndex);
+    dragDelta = 0;
+  }
+
+  hobbyViewport.addEventListener('touchstart', e => dragStart(e.touches[0].clientX), { passive: true });
+  hobbyViewport.addEventListener('touchmove',  e => dragMove(e.touches[0].clientX),  { passive: true });
+  hobbyViewport.addEventListener('touchend', dragEnd);
+  hobbyViewport.addEventListener('touchcancel', dragEnd);
+
+  hobbyViewport.addEventListener('mousedown', e => { e.preventDefault(); dragStart(e.clientX); });
+  window.addEventListener('mousemove', e => dragMove(e.clientX));
+  window.addEventListener('mouseup', dragEnd);
+
+  goToHobby(0, false);
 </script>
 
 </body>
