@@ -214,7 +214,7 @@
     background: var(--paper-alt);
     position: relative;
     touch-action: pan-y;          /* let vertical page scroll through */
-    cursor: grab;
+    cursor: zoom-in;
   }
   .hobby-viewport:active { cursor: grabbing; }
   .hobby-track {
@@ -480,6 +480,28 @@
     color: #fff; cursor: pointer; font-size: 1.1rem;
   }
   .lightbox-close:hover { background: rgba(238, 241, 237, 0.25); }
+
+  /* Medium size, used by the hobby carousel. The project storyboards keep the
+     full-width view because those slides are dense with small text. */
+  .lightbox.medium figure { max-width: min(820px, 78vw); }
+  .lightbox.medium img { max-height: 72vh; object-fit: contain; }
+  /* Pull the arrows in beside the smaller image instead of leaving them out
+     at the screen edges. */
+  .lightbox.medium .lightbox-prev {
+    left: 50%; right: auto;
+    transform: translate(calc(-1 * (min(410px, 39vw) + 50px)), -50%);
+  }
+  .lightbox.medium .lightbox-next {
+    right: 50%; left: auto;
+    transform: translate(calc(min(410px, 39vw) + 50px), -50%);
+  }
+
+  @media (max-width: 640px) {
+    /* Too little room to inset on a phone; use the normal edge positions. */
+    .lightbox.medium figure { max-width: 100%; }
+    .lightbox.medium .lightbox-prev { left: var(--space-2); transform: translateY(-50%); }
+    .lightbox.medium .lightbox-next { right: var(--space-2); transform: translateY(-50%); }
+  }
 
   @media (max-width: 640px) {
     .storyboard-strip { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
@@ -883,7 +905,7 @@
         '<img src="' + slide.thumb + '" alt="" loading="lazy">' +
         '<span class="slide-meta"><span class="slide-num">' + pad(i + 1) +
         '</span> ' + slide.caption + '</span>';
-      button.addEventListener('click', () => openLightbox(i));
+      button.addEventListener('click', () => openLightbox(currentSlides, i, 'Slide'));
       strip.appendChild(button);
     });
   }
@@ -905,17 +927,26 @@
   const lbCounter = document.getElementById('lightboxCounter');
   let lastFocused = null;
 
+  // The viewer is shared between the project storyboards and the hobby
+  // carousel, so it holds whichever list was passed when it was opened
+  // rather than reading a single global list.
+  let lightboxItems = [];
+  let lightboxLabel = 'Slide';
+
   function renderSlide() {
-    const slide = currentSlides[currentIndex];
+    const slide = lightboxItems[currentIndex];
     if (!slide) return;
     lbImg.src = slide.full;
-    lbImg.alt = 'Slide ' + (currentIndex + 1) + ': ' + slide.caption;
+    lbImg.alt = lightboxLabel + ' ' + (currentIndex + 1) + ': ' + slide.caption;
     lbCaption.textContent = slide.caption;
-    lbCounter.textContent = (currentIndex + 1) + ' / ' + currentSlides.length;
+    lbCounter.textContent = (currentIndex + 1) + ' / ' + lightboxItems.length;
   }
 
-  function openLightbox(index) {
-    if (!currentSlides.length) return;
+  function openLightbox(items, index, label, medium) {
+    if (!items || !items.length) return;
+    lightboxItems = items;
+    lightboxLabel = label || 'Slide';
+    lightbox.classList.toggle('medium', !!medium);
     lastFocused = document.activeElement;
     currentIndex = index;
     renderSlide();
@@ -932,9 +963,9 @@
   }
 
   function step(delta) {
-    if (!currentSlides.length) return;
+    if (!lightboxItems.length) return;
     // Wrap around at both ends.
-    currentIndex = (currentIndex + delta + currentSlides.length) % currentSlides.length;
+    currentIndex = (currentIndex + delta + lightboxItems.length) % lightboxItems.length;
     renderSlide();
   }
 
@@ -958,6 +989,8 @@
   showStoryboard('midazolam-pbpk');
   // ---- Hobby carousel ---------------------------------------------------
   // Order here is the order shown. Files live in hobbies/.
+  // One high-resolution file per image, so browser zoom always has real
+  // detail to draw on.
   const HOBBIES = [
     { src: 'hobbies/hobby-01.jpg', caption: 'Worldbuilding sketchbook: city concepts' },
     { src: 'hobbies/hobby-02.jpg', caption: 'Solo trekking' },
@@ -966,6 +999,11 @@
     { src: 'hobbies/hobby-05.jpg', caption: 'Wild camping on a solo trek' },
     { src: 'hobbies/hobby-06.jpg', caption: 'Castle and bridge assets in Blender' }
   ];
+
+  // Same files, in the shape the shared viewer expects.
+  const hobbyLightboxItems = HOBBIES.map(item => ({
+    full: item.src, caption: item.caption
+  }));
 
   const hobbyTrack = document.getElementById('hobbyTrack');
   const hobbyViewport = document.getElementById('hobbyViewport');
@@ -1021,18 +1059,21 @@
   // Tracks a pointer from press to release. While dragging we move the track
   // with the finger; on release, a drag past a threshold changes slide and
   // anything less snaps back.
-  let dragStartX = 0, dragDelta = 0, dragging = false;
+  let dragStartX = 0, dragDelta = 0, dragging = false, dragMoved = false;
 
   function dragStart(clientX) {
     dragging = true;
     dragStartX = clientX;
     dragDelta = 0;
+    dragMoved = false;
     hobbyTrack.classList.add('no-anim');
   }
 
   function dragMove(clientX) {
     if (!dragging) return;
     dragDelta = clientX - dragStartX;
+    // Anything past a few pixels counts as a swipe, not a tap.
+    if (Math.abs(dragDelta) > 5) dragMoved = true;
     const width = hobbyViewport.clientWidth || 1;
     let offset = (-hobbyIndex * 100) + (dragDelta / width) * 100;
     // Add resistance when pulling past either end.
@@ -1063,6 +1104,25 @@
   hobbyViewport.addEventListener('mousedown', e => { e.preventDefault(); dragStart(e.clientX); });
   window.addEventListener('mousemove', e => dragMove(e.clientX));
   window.addEventListener('mouseup', dragEnd);
+
+  // Click to enlarge, reusing the same viewer as the project storyboards.
+  // Guarded by dragMoved so finishing a swipe doesn't also open it.
+  hobbyViewport.addEventListener('click', () => {
+    // Consume the flag either way: browsers fire a click right after a swipe,
+    // and if that click didn't clear it the *next* genuine tap would be
+    // swallowed too.
+    const wasDrag = dragMoved;
+    dragMoved = false;
+    if (wasDrag) return;
+    openLightbox(hobbyLightboxItems, hobbyIndex, 'Photo', true);
+  });
+
+  hobbyViewport.addEventListener('keydown', event => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      openLightbox(hobbyLightboxItems, hobbyIndex, 'Photo', true);
+    }
+  });
 
   goToHobby(0, false);
 </script>
